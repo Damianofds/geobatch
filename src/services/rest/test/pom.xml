@@ -27,17 +27,21 @@
 
 	<dependencies>
         <!-- ================================================================-->
-        <!-- GeoStore modules -->
+        <!-- GeoBatch modules -->
         <!-- ================================================================-->
-
         <dependency>
             <groupId>it.geosolutions.geobatch</groupId>
             <artifactId>gb-rest-impl</artifactId>
         </dependency>
-
-
-        <!-- =============================================================== -->
-        <!-- =============================================================== -->
+        <dependency>
+			<groupId>it.geosolutions.geobatch</groupId>
+			<artifactId>gb-dao-xstream</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>it.geosolutions.geobatch</groupId>
+            <artifactId>gb-action-mock</artifactId>
+            <version>1.4-SNAPSHOT</version>
+        </dependency>
 
         <!-- =============================================================== -->
         <!-- APACHE COMMONS -->

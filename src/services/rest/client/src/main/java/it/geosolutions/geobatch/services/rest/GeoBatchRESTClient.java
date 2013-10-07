@@ -21,6 +21,7 @@ package it.geosolutions.geobatch.services.rest;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.cxf.common.util.Base64Utility;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
 import org.apache.cxf.jaxrs.client.WebClient;
@@ -93,7 +94,7 @@ public class GeoBatchRESTClient {
         return restUrl;
     }
 
-    public void setGeostoreRestUrl(String restUrl) {
+    public void setGeobatchRestUrl(String restUrl) {
         this.restUrl = restUrl;
     }
 
