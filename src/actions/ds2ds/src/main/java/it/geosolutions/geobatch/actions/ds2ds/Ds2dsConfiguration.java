@@ -89,6 +89,12 @@ public class Ds2dsConfiguration extends ActionConfiguration {
          * coordinate system (EPSG code) used for feature reprojection.
          */
         private String reprojectedCrs;
+        
+        /**
+         * Set this flag to TRUE in order to force the return event as the input event.
+         * The default value is FALSE, so the default behavior is to return the connection params of the target DataStore 
+         */
+        private Boolean returnSourceEvent;
 	
 	public Ds2dsConfiguration(String id, String name, String description) {
 		super(id, name, description);	
@@ -270,6 +276,20 @@ public class Ds2dsConfiguration extends ActionConfiguration {
          */
         public String getReprojectedCrs() {
             return reprojectedCrs;
+        }
+        
+        /**
+         * @return the returnSourceEvent
+         */
+        public Boolean isReturnSourceEvent() {
+            return returnSourceEvent;
+        }
+
+        /**
+         * @param returnSourceEvent the returnSourceEvent to set
+         */
+        public void setReturnSourceEvent(Boolean returnSourceEvent) {
+            this.returnSourceEvent = returnSourceEvent;
         }
 
     @Override
