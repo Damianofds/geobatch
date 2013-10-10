@@ -340,16 +340,18 @@ public abstract class DsBaseAction extends BaseAction<EventObject> {
 
     /**
      * Builds the output event, with information about the imported data.
-     *
-     * @param outputEvents
-     * @param schema
+     *  
+     * @param previousFileEvent if configuration.isReturnSourceEvent == TRUE this event will be returned instead of the output datastore params.
      * @return
      * @throws FileNotFoundException
      * @throws ActionException
      */
-    protected EventObject buildOutputEvent() throws FileNotFoundException, ActionException {
+    protected EventObject buildOutputEvent(FileSystemEvent previousFileEvent) throws FileNotFoundException, ActionException {
         updateTask("Building output event");
         FileOutputStream outStream = null;
+        if(configuration.isReturnSourceEvent() != null && configuration.isReturnSourceEvent()){
+            return previousFileEvent;
+        }
         try {
             File outputDir = getTempDir();
             File outputFile = new File(outputDir.getAbsolutePath(), "output.xml");

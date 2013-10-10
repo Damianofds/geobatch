@@ -214,7 +214,7 @@ public class Ds2dsAction extends DsBaseAction {
             updateTask("Data imported (" + count + " features)");
             transaction.commit();
             listenerForwarder.completed();
-            return buildOutputEvent();
+            return buildOutputEvent(fileEvent);
         } catch (Exception ioe) {
             try {
                 transaction.rollback();
