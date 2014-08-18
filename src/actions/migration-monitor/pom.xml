@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- =======================================================================    
+        Maven Project Configuration File
+
+        GeoSolutions GeoBatch Project
+            http://geobatch.codehaus.org
+
+        Version: $Id: pom.xml 63 04-07-2014 damiano $
+======================================================================= -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>it.geosolutions.geobatch</groupId>
+    <artifactId>gb-actions</artifactId>
+    <version>1.4-SNAPSHOT</version>
+  </parent>
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
+  <groupId>it.geosolutions.geobatch</groupId>
+  <artifactId>gb-action-migration-monitor</artifactId>
+  <packaging>jar</packaging>
+  <name>GeoBatch action: AdBArno Migration Monitor</name>
+  <description>GeoSolutions GeoBatch flow managers - Migration Monitor flow.</description>
+  <properties>
+    <root.basedir>${project.basedir}/../..</root.basedir>
+  </properties>
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>it.geosolutions.geobatch</groupId>
+      <artifactId>gb-core-impl</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>it.geosolutions.geobatch</groupId>
+      <artifactId>gb-fs-catalog</artifactId>
+    </dependency>
+    <!-- ========================================================== -->
+    <!--      Spring                                                -->
+    <!-- ========================================================== -->
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-aop</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-orm</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-jdbc</artifactId>
+    </dependency>
+	<!-- =========================================================== -->
+	<!--     HIBERNATE-GENERIC-DAO                                   -->
+	<!-- =========================================================== -->
+	<dependency>
+		<groupId>com.googlecode.genericdao</groupId>
+		<artifactId>dao</artifactId>
+		<version>1.1.0</version>
+	</dependency>
+	<dependency>
+		<groupId>com.googlecode.genericdao</groupId>
+		<artifactId>search-jpa-hibernate</artifactId>
+		<version>1.1.0</version>
+	</dependency>
+	<!-- =========================================================== -->
+	<!--     HIBERNATE                                               -->
+	<!-- =========================================================== -->
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-annotations</artifactId>
+		<version>3.3.1.GA</version>
+		  <exclusions>
+	        <exclusion>
+				<groupId>asm</groupId>
+				<artifactId>asm</artifactId>
+	        </exclusion>
+	        <exclusion>
+				<groupId>asm</groupId>
+				<artifactId>asm-attrs</artifactId>
+	        </exclusion>
+	      </exclusions>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-commons-annotations</artifactId>
+		<version>3.3.0.ga</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-entitymanager</artifactId>
+		<version>3.3.2.GA</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-validator</artifactId>
+		<version>3.0.0.ga</version>
+	</dependency>
+
+
+	<dependency>
+		<groupId>javax.transaction</groupId>
+		<artifactId>jta</artifactId>
+		<version>1.1</version>
+	</dependency>
+   
+	
+    <dependency>
+       <groupId>org.hibernate.javax.persistence</groupId>
+       <artifactId>hibernate-jpa-2.0-api</artifactId>
+       <version>1.0.1.Final</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>9.1-901-1.jdbc4</version>
+    </dependency>
+    
+    
+	<!--  This is needed by Hibernate  but seems to be a non transitive dependency... -->
+	<dependency>
+		<groupId>dom4j</groupId>
+		<artifactId>dom4j</artifactId>
+		<version>1.6.1</version>
+	</dependency>
+	<!--  This is a more recent version of ASM than the ones imported as transitive dependency through hibernate-annotations -->
+	<dependency>
+		<groupId>asm</groupId>
+		<artifactId>asm</artifactId>
+		<version>3.1</version>
+	</dependency>
+	<!-- =========================================================== -->
+	<!--     APACHE COMMONS                                          -->
+	<!-- =========================================================== -->
+    <dependency>
+      <groupId>commons-dbcp</groupId>
+      <artifactId>commons-dbcp</artifactId>
+      <version>1.4</version>
+    </dependency>
+	
+	
+  </dependencies>
+</project>

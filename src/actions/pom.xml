@@ -254,5 +254,17 @@
         <module>commons</module>
       </modules>
     </profile>
+	<profile>
+      <id>migration-monitor</id>
+      <activation>
+        <property>
+          <name>all</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <modules>
+        <module>migration-monitor</module>
+      </modules>
+    </profile>
   </profiles>
 </project>

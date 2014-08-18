@@ -371,6 +371,12 @@
         <artifactId>gb-action-geotiff</artifactId>
         <version>${project.version}</version>
       </dependency>
+	  <!-- MIGRATION-MONITOR DON'T COMMIT JUST AS EXAMPLE-->
+      <dependency>
+        <groupId>it.geosolutions.geobatch</groupId>
+        <artifactId>gb-action-migration-monitor</artifactId>
+        <version>${project.version}</version>
+      </dependency>
       <!-- FreeMarker -->
       <dependency>
         <groupId>org.freemarker</groupId>

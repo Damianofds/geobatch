@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature>
+	<typeName>${typeName_value}</typeName> 
+
+	<crs>${crs_value}</crs>
+
+    <dataStore>                    
+        <entry>
+          <string>dbtype</string>
+          <string>${dbtype_value}</string>
+        </entry>
+        <entry>
+          <string>server</string>
+          <string>${server_value}</string>
+        </entry>
+        <entry>
+          <string>port</string>
+          <string>${port_value}</string>
+        </entry>
+        <entry>
+          <string>instance</string>
+          <string>${instance_value}</string>
+        </entry>
+        <entry>
+          <string>user</string>
+          <string>${user_value}</string>
+        </entry>
+        <entry>
+          <string>password</string>
+          <string>${password_value}</string>
+        </entry>                     
+        <entry>
+          <string>pool.maxConnections</string>
+          <string>${pool.maxConnections_value}</string>
+        </entry>                     
+        <entry>
+          <string>pool.minConnections</string>
+          <string>${pool.minConnections_value}</string>
+        </entry>                     
+        <entry>
+          <string>datastore.allowNonSpatialTables</string>
+          <string>${datastore.allowNonSpatialTables_value}</string>
+        </entry>                     
+        <entry>
+          <string>pool.timeOut</string>
+          <string>${pool.timeOut_value}</string>
+        </entry>                     
+    </dataStore>
+</feature>

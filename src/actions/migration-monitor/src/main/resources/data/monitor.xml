@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowConfiguration>
+
+	<id>monitor</id>
+	<name>monitor</name>
+	<description>Monitor a DB table for ADBArno migrations</description>
+
+	<autorun>true</autorun>
+
+	<corePoolSize>10</corePoolSize>
+	<maximumPoolSize>30</maximumPoolSize>
+	<keepAliveTime>15</keepAliveTime> <!--seconds -->
+	<workQueueSize>100</workQueueSize>
+
+	<EventGeneratorConfiguration>
+		<wildCard>*.galapagos</wildCard>
+		<watchDirectory>in</watchDirectory>
+		<osType>OS_UNDEFINED</osType>
+		<eventType>FILE_ADDED</eventType>
+		<!--interval>0 * * * * ?</interval --> <!-- CRON: every minute at sec 0 -->
+		<!-- <interval>20</interval> -->  <!-- each 20 sec -->
+		<serviceID>fsEventGeneratorService</serviceID>
+	</EventGeneratorConfiguration>
+
+	<EventConsumerConfiguration>
+		<id>adba_monitor</id>
+
+		<listenerId>ADBA_ConsumerLogger0</listenerId>
+		<listenerId>ADBA_Cumulator0</listenerId>
+
+		<performBackup>true</performBackup>
+		<preserveInput>false</preserveInput>
+
+		<MonitorConfiguration>
+			<id>GeoTiffRetiler</id>
+			<description>Action to retile a geotif</description>
+			<name>GeoTiffRetiler action</name>
+
+			<listenerId>GeoTIFFStatusActionLogger0</listenerId>
+			<listenerId>GeoTIFFActionLogger0</listenerId>
+
+			<forceToBigTiff>false</forceToBigTiff>
+			<tileH>256</tileH>
+			<tileW>256</tileW>
+
+		</MonitorConfiguration>
+
+		<ListenerConfigurations>
+			<StatusProgressListener>
+				<serviceID>statusListenerService</serviceID>
+				<id>ADBA_StatusActionLogger0</id>
+			</StatusProgressListener>
+
+			<LoggingProgressListener>
+				<serviceID>loggingListenerService</serviceID>
+				<id>ADBA_ActionLogger0</id>
+
+				<loggerName>ADBA_ActionLogger0</loggerName>
+			</LoggingProgressListener>
+
+			<LoggingProgressListener>
+				<serviceID>loggingListenerService</serviceID>
+				<id>ADBA_ConsumerLogger0</id>
+
+				<loggerName>ADBA_ConsumerLogger0</loggerName>
+			</LoggingProgressListener>
+
+			<CumulatingProgressListener>
+				<serviceID>cumulatingListenerService</serviceID>
+				<id>ADBA_Cumulator0</id>
+			</CumulatingProgressListener>
+		</ListenerConfigurations>
+
+</FlowConfiguration>
