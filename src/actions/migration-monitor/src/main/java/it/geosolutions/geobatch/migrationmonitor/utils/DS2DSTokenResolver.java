@@ -41,20 +41,21 @@ import java.io.StringWriter;
 import java.util.Properties;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
  * This class is responsible for:
  * *** Load the template of the DS2DS file
- * *** Sobstitute the token in the template with the values retrieved from the DB mixed with defaults value if no value is aveilable for a certain field 
+ * *** Substitute the token in the template with the values retrieved from the DB mixed with defaults value if no value is aveilable for a certain field 
  * 
  * @author DamianoG
  * 
  */
 public class DS2DSTokenResolver {
 
-    private static final Logger LOGGER = Logger.getLogger(DS2DSTokenResolver.class);
+    protected final static Logger LOGGER = LoggerFactory.getLogger(DS2DSTokenResolver.class);
 
     // ${typeName_value}
     // ${crs_value}
@@ -69,7 +70,7 @@ public class DS2DSTokenResolver {
     // ${datastore.allowNonSpatialTables_value}
     // ${pool.timeOut_value}
 
-    private String outputFile;
+    private String outputFileContent;
     
     /**
      * Takes an instance of MigrationMonitor and use it (plus the defaults property file) in order to build the DS2DS
@@ -85,7 +86,7 @@ public class DS2DSTokenResolver {
         Reader r = null;
         String output = null;
         try {
-            is = getClass().getResourceAsStream("template.tpl");
+            is = getClass().getResourceAsStream("template.txt");
             r = new InputStreamReader(is);
             writer = new StringWriter();
             IOUtils.copy(is, writer);
@@ -124,66 +125,68 @@ public class DS2DSTokenResolver {
             msgToLog.append("[[");
             
             tmp=migMonit.getTabella();
-            output.replace(TYPENAME, tmp);
+            output = output.replace(TYPENAME, tmp);
             msgToLog.append("TYPENAME:");
             msgToLog.append(tmp);
             
             tmp=Integer.toString(migMonit.getEpsg());
-            output.replace(CRS, tmp);
+            output = output.replace(CRS, tmp);
             msgToLog.append(";CRS:");
             msgToLog.append(tmp);
             
             tmp=migMonit.getDatabase();
-            output.replace(DBTYPE, tmp);
+            output = output.replace(DBTYPE, tmp);
             msgToLog.append(";DBTYPE:");
             msgToLog.append(tmp);
             
             tmp=migMonit.getServerIp();
-            output.replace(SERVER, tmp);
+            output = output.replace(SERVER, tmp);
             msgToLog.append(";SERVER:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("PORT");
-            output.replace(PORT, tmp);
+            output = output.replace(PORT, tmp);
             msgToLog.append(";PORT:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("INSTANCE");
-            output.replace(INSTANCE, tmp);
+            output = output.replace(INSTANCE, tmp);
             msgToLog.append(";INSTANCE:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("USER");
-            output.replace(USER, tmp);
+            output = output.replace(USER, tmp);
             msgToLog.append(";USER:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("PASSWORD");
-            output.replace(PASSWORD, tmp);
+            output = output.replace(PASSWORD, tmp);
             msgToLog.append(";PASSWORD:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("MAX_CONN");
-            output.replace(MAX_CONN, tmp);
+            output = output.replace(MAX_CONN, tmp);
             msgToLog.append(";MAX_CONN:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("MIN_CONN");
-            output.replace(MIN_CONN, tmp);
+            output = output.replace(MIN_CONN, tmp);
             msgToLog.append(";MIN_CONN:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("ALLOW_NON_SPATIAL_TABLES");
-            output.replace(ALLOW_NON_SPATIAL_TABLES, tmp);
+            output = output.replace(ALLOW_NON_SPATIAL_TABLES, tmp);
             msgToLog.append(";ALLOW_NON_SPATIAL_TABLES:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("TIMEOUT");
-            output.replace(TIMEOUT, tmp);
+            output = output.replace(TIMEOUT, tmp);
             msgToLog.append(";TIMEOUT:");
             msgToLog.append(tmp);
 
             msgToLog.append("]]");
+            
+            outputFileContent = output;
             
             LOGGER.info("Loaded info for current Migration Monitor (custom + defaults):\n"+msgToLog.toString());
             
@@ -205,6 +208,6 @@ public class DS2DSTokenResolver {
      * @return the resolved DS2DStemplate file
      */
     public String getOutputFileContent() {
-        return outputFile;
+        return outputFileContent;
     }
 }
