@@ -23,6 +23,7 @@
 package it.geosolutions.geobatch.migrationmonitor.monitor;
 
 import it.geosolutions.filesystemmonitor.monitor.FileSystemEvent;
+import it.geosolutions.filesystemmonitor.monitor.FileSystemEventType;
 import it.geosolutions.geobatch.annotations.Action;
 import it.geosolutions.geobatch.annotations.CheckConfiguration;
 import it.geosolutions.geobatch.flow.event.action.ActionException;
@@ -32,6 +33,7 @@ import it.geosolutions.geobatch.migrationmonitor.model.MigrationMonitor;
 import it.geosolutions.geobatch.migrationmonitor.utils.DS2DSTokenResolver;
 import it.geosolutions.geobatch.migrationmonitor.utils.enums.MigrationStatus;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -94,7 +96,7 @@ public class MonitorAction extends BaseAction<FileSystemEvent> {
                     LOGGER.error(message);
                 throw new IllegalStateException(message);
             }
-
+            
             // retrieve all the ELEMENTS table from the DB
             List<MigrationMonitor> migrationList = migrationMonitorDAO.findTablesToMigrate();
             DS2DSTokenResolver tknRes = null;
@@ -119,10 +121,10 @@ public class MonitorAction extends BaseAction<FileSystemEvent> {
                     continue;
                 }
 
-                String filename = mm.getTabella() + mm.getIdStrato() + ".xml";
+                String filename = getTempDir() + File.separator + mm.getTabella() + mm.getIdStrato() + ".xml";
                 Writer writer = null;
                 try {
-                    writer = new FileWriter(getTempDir() + "/" + filename);
+                    writer = new FileWriter(filename);
                     writer.append(tknRes.getOutputFileContent());
                 } catch (IOException e) {
                     LOGGER.error("error while processing MigrationMonitor "
@@ -134,6 +136,8 @@ public class MonitorAction extends BaseAction<FileSystemEvent> {
                 } finally {
                     try {
                         writer.close();
+                        FileSystemEvent fse = new FileSystemEvent(new File(filename), FileSystemEventType.FILE_ADDED);
+                        outputEvents.add(fse);
                     } catch (IOException e) {
                         LOGGER.error(e.getMessage(), e);
                     }
