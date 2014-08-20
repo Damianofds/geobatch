@@ -38,7 +38,7 @@
     <!-- DAOs -->
     <!--=====================================================================-->
     <bean id="migrationMonitorDAO" class="it.geosolutions.geobatch.migrationmonitor.dao.MigrationMonitorDAOImpl" >
-        <property name="searchProcessor" ref="fra2015SearchProcessor" />
+        <property name="searchProcessor" ref="migration-monitorSearchProcessor" />
     </bean>
 	
 </beans>

@@ -39,6 +39,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 /**
  * 
  * 
@@ -57,6 +60,12 @@ public class MonitorAction extends BaseAction<FileSystemEvent> {
     public MonitorAction(MonitorConfiguration configuration) {
         super(configuration);
         this.configuration = configuration;
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-DAO.xml");
+        Object mm = context.getBean("migrationMonitorDAO");
+        if(mm instanceof MigrationMonitorDAO){
+            setMigrationMonitorDAO((MigrationMonitorDAO)mm);
+        }
+        
     }
 
     public void setMigrationMonitorDAO(MigrationMonitorDAO migrationMonitorDAO) {

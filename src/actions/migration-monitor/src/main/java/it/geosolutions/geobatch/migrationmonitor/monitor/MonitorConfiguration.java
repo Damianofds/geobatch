@@ -31,26 +31,38 @@ import it.geosolutions.geobatch.configuration.event.action.ActionConfiguration;
  * @version $MonitorAction.java Revision: 0.1 $ 24/07/2014
  */
 
-public class MonitorConfiguration extends ActionConfiguration {
+public class MonitorConfiguration extends ActionConfiguration{
 
+    private String field; 
     
-    protected MonitorConfiguration() {
-        super("XSTREAM PROBLEM!", "XSTREAM PROBLEM!", "XSTREAM PROBLEM!");
-    }
-
-
     public MonitorConfiguration(String id, String name, String description) {
         super(id, name, description);
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName() + "[" + "]";
+    /**
+     * @return the field
+     */
+    public String getField() {
+        return field;
     }
 
-    @Override
-    public MonitorConfiguration clone() {
-        final MonitorConfiguration configuration = (MonitorConfiguration) super.clone();
-        return configuration;
+    /**
+     * @param field the field to set
+     */
+    public void setField(String field) {
+        this.field = field;
     }
+    
+    
+
+//    @Override
+//    public String toString() {
+//        return getClass().getSimpleName() + "[" + "]";
+//    }
+//
+//    @Override
+//    public MonitorConfiguration clone() {
+//        final MonitorConfiguration configuration = (MonitorConfiguration) super.clone();
+//        return configuration;
+//    }
 }

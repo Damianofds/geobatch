@@ -28,22 +28,9 @@ import it.geosolutions.geobatch.configuration.event.action.ActionConfiguration;
 import it.geosolutions.geobatch.flow.event.action.ActionException;
 import it.geosolutions.geobatch.flow.event.action.BaseAction;
 import it.geosolutions.geobatch.migrationmonitor.dao.MigrationMonitorDAO;
-import it.geosolutions.geobatch.migrationmonitor.model.MigrationMonitor;
-import it.geosolutions.geobatch.migrationmonitor.test.MigrationMonitorTest;
-import it.geosolutions.geobatch.migrationmonitor.utils.DS2DSTokenResolver;
-import it.geosolutions.geobatch.migrationmonitor.utils.enums.DS2DSConfigTokens;
-import it.geosolutions.geobatch.migrationmonitor.utils.enums.MigrationStatus;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Queue;
-
-import org.apache.log4j.Logger;
-
-import com.googlecode.genericdao.search.Search;
 
 /**
  *
@@ -70,8 +57,6 @@ import com.googlecode.genericdao.search.Search;
 @Action(configurationClass=CheckerConfiguration.class)
 public class CheckerAction extends BaseAction<FileSystemEvent> {
 
-    
-    private static final Logger LOGGER = Logger.getLogger(CheckerAction.class);
     
     private MigrationMonitorDAO migrationMonitorDAO; 
     
