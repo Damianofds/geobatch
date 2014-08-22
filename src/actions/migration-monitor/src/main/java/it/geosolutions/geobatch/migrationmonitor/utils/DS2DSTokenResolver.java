@@ -125,61 +125,74 @@ public class DS2DSTokenResolver {
             msgToLog.append("[[");
             
             tmp=migMonit.getTabella();
+            tmp=tmp.trim();
             output = output.replace(TYPENAME, tmp);
             msgToLog.append("TYPENAME:");
             msgToLog.append(tmp);
             
-            tmp=Integer.toString(migMonit.getEpsg());
+            tmp=(migMonit.getEpsg() == null)?"":Integer.toString(migMonit.getEpsg());
+            tmp=tmp.trim();
             output = output.replace(CRS, tmp);
             msgToLog.append(";CRS:");
             msgToLog.append(tmp);
             
-            tmp=migMonit.getDatabase();
+            tmp=prop.getProperty("DBTYPE");
+            tmp=tmp.trim();
             output = output.replace(DBTYPE, tmp);
             msgToLog.append(";DBTYPE:");
             msgToLog.append(tmp);
             
             tmp=migMonit.getServerIp();
+            tmp=tmp.trim();
             output = output.replace(SERVER, tmp);
             msgToLog.append(";SERVER:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("PORT");
+            tmp=tmp.trim();
             output = output.replace(PORT, tmp);
             msgToLog.append(";PORT:");
             msgToLog.append(tmp);
             
-            tmp=prop.getProperty("INSTANCE");
+            String tmpDefault = prop.getProperty("INSTANCE");
+            tmp=(tmpDefault == null || tmpDefault.isEmpty())?migMonit.getDatabase():tmpDefault;
+            tmp=tmp.trim();
             output = output.replace(INSTANCE, tmp);
             msgToLog.append(";INSTANCE:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("USER");
+            tmp=tmp.trim();
             output = output.replace(USER, tmp);
             msgToLog.append(";USER:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("PASSWORD");
+            tmp=tmp.trim();
             output = output.replace(PASSWORD, tmp);
             msgToLog.append(";PASSWORD:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("MAX_CONN");
+            tmp=tmp.trim();
             output = output.replace(MAX_CONN, tmp);
             msgToLog.append(";MAX_CONN:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("MIN_CONN");
+            tmp=tmp.trim();
             output = output.replace(MIN_CONN, tmp);
             msgToLog.append(";MIN_CONN:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("ALLOW_NON_SPATIAL_TABLES");
+            tmp=tmp.trim();
             output = output.replace(ALLOW_NON_SPATIAL_TABLES, tmp);
             msgToLog.append(";ALLOW_NON_SPATIAL_TABLES:");
             msgToLog.append(tmp);
             
             tmp=prop.getProperty("TIMEOUT");
+            tmp=tmp.trim();
             output = output.replace(TIMEOUT, tmp);
             msgToLog.append(";TIMEOUT:");
             msgToLog.append(tmp);
