@@ -32,5 +32,8 @@ public interface MigrationMonitorDAO extends RestrictedGenericDAO<MigrationMonit
     public MigrationMonitor findByName(String entryId);
     
     public List<MigrationMonitor> findTablesToMigrate();
+
+    public MigrationMonitor findByTablename(String host, String ip, String schema, String tableName)
+            throws Exception;
     
 }

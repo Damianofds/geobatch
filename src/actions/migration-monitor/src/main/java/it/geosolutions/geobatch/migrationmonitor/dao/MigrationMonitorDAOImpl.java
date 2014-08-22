@@ -62,12 +62,33 @@ public class MigrationMonitorDAOImpl extends BaseDAO<MigrationMonitor, Long> imp
     public List<MigrationMonitor> findTablesToMigrate() {
         Search searchCriteria = new Search(MigrationMonitor.class);
         searchCriteria.addFilterEqual("attivo", true);
-        searchCriteria.addFilterEqual("statoMigrazione", MigrationStatus.NOTYET);
+        searchCriteria.addFilterIn("statoMigrazione", MigrationStatus.NOTYET, MigrationStatus.INPROGRESS);
         List<MigrationMonitor> entries = this.search(searchCriteria);
         if (entries == null){
             return new ArrayList<MigrationMonitor>();
         }
         return entries;
+    }
+
+    @Override
+    public MigrationMonitor findByTablename(String host, String ip, String schema, String tableName) throws Exception {
+        Search searchCriteria = new Search(MigrationMonitor.class);
+        searchCriteria.addFilterEqual("host", host);
+        searchCriteria.addFilterEqual("ip", ip);
+        searchCriteria.addFilterEqual("schema", schema);
+        searchCriteria.addFilterEqual("tabella", tableName);
+        
+        searchCriteria.addFilterEqual("attivo", true);
+        searchCriteria.addFilterIn("statoMigrazione", MigrationStatus.INPROGRESS, MigrationStatus.NOTYET );
+        
+        List<MigrationMonitor> entries = this.search(searchCriteria);
+        if (entries == null){
+            return new MigrationMonitor();
+        }
+        if (entries.size() != 1){
+            throw new Exception("More than one results for the search is not expected...");
+        }
+        return entries.get(0);
     }
     
 }

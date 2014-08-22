@@ -23,14 +23,33 @@
 package it.geosolutions.geobatch.migrationmonitor.statuschecker;
 
 import it.geosolutions.filesystemmonitor.monitor.FileSystemEvent;
+import it.geosolutions.filesystemmonitor.monitor.FileSystemEventType;
 import it.geosolutions.geobatch.annotations.Action;
 import it.geosolutions.geobatch.configuration.event.action.ActionConfiguration;
 import it.geosolutions.geobatch.flow.event.action.ActionException;
 import it.geosolutions.geobatch.flow.event.action.BaseAction;
+import it.geosolutions.geobatch.flow.event.consumer.EventConsumerStatus;
 import it.geosolutions.geobatch.migrationmonitor.dao.MigrationMonitorDAO;
+import it.geosolutions.geobatch.migrationmonitor.model.MigrationMonitor;
+import it.geosolutions.geobatch.migrationmonitor.monitor.MonitorConfiguration;
+import it.geosolutions.geobatch.migrationmonitor.utils.enums.MigrationStatus;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.Queue;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  *
@@ -42,14 +61,10 @@ import java.util.Queue;
 
 /**
  * 
- * The checker Action is a custom Action developed for ADBA that is responsible to periodically monitoring 
- * a database table searching for records that identify a "request for a migration"
- * 
- * * Each x seconds do
- * *** Load the data from the database table, filter the dataset with the filter "where attivo=TRUE AND stato_migrazione=NOTYET"
- * *** For each record represent a migration produce the related input file for the DS2DS action that is responsible for perform the migration
- * *** Mark the record as INPROGRESS   
- * 
+ * The checker Action is a custom Action developed for ADBA that is responsible to change the status from INPROGRESS to MIGRATED
+ * This action must follow a ds2ds action that is responsible to perform the migration. 
+ * If the ds2ds action fails this action won't be invoked so the flag remain in the same status
+ * If the ds2ds terminate with a successful outcome this action is invoked. 
  * 
  * @author DamianoG
  *
@@ -57,21 +72,84 @@ import java.util.Queue;
 @Action(configurationClass=CheckerConfiguration.class)
 public class CheckerAction extends BaseAction<FileSystemEvent> {
 
+    private CheckerConfiguration configuration;
     
-    private MigrationMonitorDAO migrationMonitorDAO; 
+    private MigrationMonitorDAO migrationMonitorDAO;
     
-    public void setMigrationMonitorDAO(MigrationMonitorDAO migrationMonitorDAO){
-        this.migrationMonitorDAO = migrationMonitorDAO;
+    public CheckerAction(CheckerConfiguration actionConfiguration) {
+        super(actionConfiguration);
+        this.configuration = actionConfiguration;
+        ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext-DAO.xml");
+        Object mm = context.getBean("migrationMonitorDAO");
+        if(mm instanceof MigrationMonitorDAO){
+            setMigrationMonitorDAO((MigrationMonitorDAO)mm);
+        }
     }
     
-    public CheckerAction(ActionConfiguration actionConfiguration) {
-        super(actionConfiguration);
+    public void setMigrationMonitorDAO(MigrationMonitorDAO migrationMonitorDAO) {
+        this.migrationMonitorDAO = migrationMonitorDAO;
     }
 
     @Override
     public Queue<FileSystemEvent> execute(Queue<FileSystemEvent> arg0) throws ActionException {
 
-        return null;
+        // return object
+        final Queue<FileSystemEvent> outputEvents = new LinkedList<FileSystemEvent>();
+        
+        try{
+            //gather the input file in order to read the database table name
+            File flowTempDirectory = getTempDir();
+            File [] files = flowTempDirectory.listFiles();
+            File inputEventFile = null;
+            if(files != null && files.length == 1 && files[0].getName().endsWith(".xml")){
+                inputEventFile = files[0];
+            }
+            else{
+                throw new Exception("Only one file, type xml,  is expected in the root of the temp directory");
+            }
+            
+            // set as the action output event the flow input event
+            FileSystemEvent fse = new FileSystemEvent(inputEventFile, FileSystemEventType.FILE_ADDED);
+            outputEvents.add(fse);
+            
+            //parse the xml file and get the table name
+            String tableName = "";
+            String host = "";
+            String ip = "";
+            String schema = "";
+            try {
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder;
+                dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(inputEventFile);
+                doc.getDocumentElement().normalize();
+                NodeList nodes = doc.getElementsByTagName("typeName");
+                if(nodes == null || nodes.getLength() != 1){
+                    throw new Exception("more than one typeName has been found in the input event... this is not possible...");
+                }
+                Node n =  nodes.item(0);
+                tableName = n.getNodeValue();
+            } catch (Exception e) {
+                LOGGER.error(e.getMessage(), e);
+                throw new Exception("Error while parsing input file... exception message: " + e.getMessage());
+            }
+            LOGGER.info("The table name is: " + tableName);
+            
+            //change the status in the strati_rif table
+            MigrationMonitor mm = migrationMonitorDAO.findByTablename(host, ip, schema, tableName);
+            mm.setStatoMigrazione(MigrationStatus.MIGRATED.toString().toUpperCase());
+            migrationMonitorDAO.merge(mm);
+        
+        } catch (Exception t) {
+            final String message = "CheckerAction::execute(): " + t.getLocalizedMessage();
+            if (LOGGER.isErrorEnabled())
+                LOGGER.error(message, t);
+            final ActionException exc = new ActionException(this, message, t);
+            listenerForwarder.failed(exc);
+            throw exc;
+        }
+
+        return outputEvents;
     }
 
     @Override
