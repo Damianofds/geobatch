@@ -71,11 +71,11 @@ public class MigrationMonitorDAOImpl extends BaseDAO<MigrationMonitor, Long> imp
     }
 
     @Override
-    public MigrationMonitor findByTablename(String host, String ip, String schema, String tableName) throws Exception {
+    public MigrationMonitor findByTablename(String host, String db, String schema, String tableName) throws Exception {
         Search searchCriteria = new Search(MigrationMonitor.class);
-        searchCriteria.addFilterEqual("host", host);
-        searchCriteria.addFilterEqual("ip", ip);
-        searchCriteria.addFilterEqual("schema", schema);
+        searchCriteria.addFilterEqual("serverIp", host);
+        searchCriteria.addFilterEqual("database", db);
+        searchCriteria.addFilterEqual("schemaNome", schema);
         searchCriteria.addFilterEqual("tabella", tableName);
         
         searchCriteria.addFilterEqual("attivo", true);

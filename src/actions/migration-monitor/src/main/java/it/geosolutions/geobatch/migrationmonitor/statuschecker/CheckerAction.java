@@ -25,31 +25,24 @@ package it.geosolutions.geobatch.migrationmonitor.statuschecker;
 import it.geosolutions.filesystemmonitor.monitor.FileSystemEvent;
 import it.geosolutions.filesystemmonitor.monitor.FileSystemEventType;
 import it.geosolutions.geobatch.annotations.Action;
-import it.geosolutions.geobatch.configuration.event.action.ActionConfiguration;
 import it.geosolutions.geobatch.flow.event.action.ActionException;
 import it.geosolutions.geobatch.flow.event.action.BaseAction;
-import it.geosolutions.geobatch.flow.event.consumer.EventConsumerStatus;
 import it.geosolutions.geobatch.migrationmonitor.dao.MigrationMonitorDAO;
 import it.geosolutions.geobatch.migrationmonitor.model.MigrationMonitor;
-import it.geosolutions.geobatch.migrationmonitor.monitor.MonitorConfiguration;
 import it.geosolutions.geobatch.migrationmonitor.utils.enums.MigrationStatus;
 
-
 import java.io.File;
-import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -89,7 +82,8 @@ public class CheckerAction extends BaseAction<FileSystemEvent> {
     public void setMigrationMonitorDAO(MigrationMonitorDAO migrationMonitorDAO) {
         this.migrationMonitorDAO = migrationMonitorDAO;
     }
-
+    
+    
     @Override
     public Queue<FileSystemEvent> execute(Queue<FileSystemEvent> arg0) throws ActionException {
 
@@ -98,14 +92,18 @@ public class CheckerAction extends BaseAction<FileSystemEvent> {
         
         try{
             //gather the input file in order to read the database table name
-            File flowTempDirectory = getTempDir();
+            File flowTempDirectory = new File(getTempDir().getParent());
             File [] files = flowTempDirectory.listFiles();
             File inputEventFile = null;
-            if(files != null && files.length == 1 && files[0].getName().endsWith(".xml")){
-                inputEventFile = files[0];
+            if(files != null && files.length > 0){
+                for(File f : files){
+                    if(f.isFile() && f.getName().endsWith(".xml")){
+                        inputEventFile = f;
+                    }
+                }
             }
             else{
-                throw new Exception("Only one file, type xml,  is expected in the root of the temp directory");
+                throw new Exception("One file, type xml,  is expected in the root of the temp directory");
             }
             
             // set as the action output event the flow input event
@@ -115,7 +113,7 @@ public class CheckerAction extends BaseAction<FileSystemEvent> {
             //parse the xml file and get the table name
             String tableName = "";
             String host = "";
-            String ip = "";
+            String db = "";
             String schema = "";
             try {
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -128,7 +126,18 @@ public class CheckerAction extends BaseAction<FileSystemEvent> {
                     throw new Exception("more than one typeName has been found in the input event... this is not possible...");
                 }
                 Node n =  nodes.item(0);
-                tableName = n.getNodeValue();
+                tableName = n.getTextContent();
+                NodeList entries = doc.getElementsByTagName("entry");
+                host = extractEntry("server", entries);
+                if(host == null){
+                    host = extractEntry("host", entries);
+                }
+                db = extractEntry("instance", entries);
+                if(db == null){
+                    db = extractEntry("database", entries);
+                }
+                schema = extractEntry("schema", entries);
+                LOGGER.info("Changing state to MIGRATED for records with: server_ip:'" + host + "' db:'" + db + "' schema_nome:'" + schema + "' tabella:'" + tableName + "'");
             } catch (Exception e) {
                 LOGGER.error(e.getMessage(), e);
                 throw new Exception("Error while parsing input file... exception message: " + e.getMessage());
@@ -136,7 +145,7 @@ public class CheckerAction extends BaseAction<FileSystemEvent> {
             LOGGER.info("The table name is: " + tableName);
             
             //change the status in the strati_rif table
-            MigrationMonitor mm = migrationMonitorDAO.findByTablename(host, ip, schema, tableName);
+            MigrationMonitor mm = migrationMonitorDAO.findByTablename(host, db, schema, tableName);
             mm.setStatoMigrazione(MigrationStatus.MIGRATED.toString().toUpperCase());
             migrationMonitorDAO.merge(mm);
         
@@ -152,6 +161,32 @@ public class CheckerAction extends BaseAction<FileSystemEvent> {
         return outputEvents;
     }
 
+    
+    public String extractEntry(String entryName, NodeList entries){
+        String text = "";
+        boolean found = false;
+        for(int i=0; i<entries.getLength(); i++){
+            Node n = entries.item(i);
+            NodeList cn = n.getChildNodes();
+            for(int j=0; j<cn.getLength(); j++){
+                Node tmp = cn.item(j);
+                if(tmp.getNodeType() == Node.ELEMENT_NODE){
+                    String tmpText = tmp.getTextContent(); 
+                    if(tmpText.equals(entryName)){
+                        found = true;
+                    }
+                    else{
+                        text = tmpText;
+                    }
+                }
+            }
+            if(found){
+                return text;
+            }
+        }
+        return null;
+    }
+    
     @Override
     public boolean checkConfiguration() {
 
