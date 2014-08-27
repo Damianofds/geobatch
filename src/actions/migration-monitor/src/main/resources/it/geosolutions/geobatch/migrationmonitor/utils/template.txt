@@ -22,6 +22,10 @@
           <string>${instance_value}</string>
         </entry>
         <entry>
+          <string>schema</string>
+          <string>${schema_value}</string>
+        </entry>
+        <entry>
           <string>user</string>
           <string>${user_value}</string>
         </entry>

@@ -110,7 +110,7 @@ public class MonitorAction extends BaseAction<FileSystemEvent> {
             for (MigrationMonitor mm : migrationList) {
                 iterCounter++;
                 try {
-                    tknRes = new DS2DSTokenResolver(mm);
+                    tknRes = new DS2DSTokenResolver(mm, getConfigDir());
                 } catch (IOException e) {
                     failsCounter++;
                     LOGGER.error(e.getMessage(), e);

@@ -31,10 +31,12 @@ public class DS2DSConfigTokens {
     public static String SERVER = "${server_value}";
     public static String PORT = "${port_value}";
     public static String INSTANCE = "${instance_value}";
+    public static String DATABASE = "${database_value}";
     public static String USER = "${user_value}";
     public static String PASSWORD = "${password_value}";
     public static String MAX_CONN = "${pool.maxConnections_value}";
     public static String MIN_CONN = "${pool.minConnections_value}";
     public static String ALLOW_NON_SPATIAL_TABLES = "${datastore.allowNonSpatialTables_value}";
     public static String TIMEOUT = "${pool.timeOut_value}";
+    public static String SCHEMA = "${schema_value}";
 }
