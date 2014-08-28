@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowConfiguration>
+
+    <id>ds2ds_sde2pg</id>
+    <description>DataStore to DataStore configuration flow</description>
+    <name>ds2ds flow</name>
+
+    <autorun>true</autorun>
+
+    <EventGeneratorConfiguration>
+        <wildCard>*.xml</wildCard>
+        <watchDirectory>migration/in</watchDirectory>
+        <osType>OS_UNDEFINED</osType>
+        <eventType>FILE_ADDED</eventType>
+        <id>Ds2dsFlow</id>
+        <keepFiles>true</keepFiles>
+        <serviceID>fsEventGeneratorService</serviceID>
+        <description>Ds2ds event generator description</description>
+        <name>Ds2ds</name>
+    </EventGeneratorConfiguration>
+
+    <EventConsumerConfiguration>
+        <id>ds2ds_sde2pg</id>
+        <description>Export from ArcSDE to PostGIS</description>
+        <name>ds2ds_sde2pg</name>
+        <performBackup>false</performBackup>
+		<Ds2dsConfiguration>
+            <id>Ds2ds</id>
+            <description>Ds2ds action</description>
+            <name>Ds2dsConfiguration</name>
+
+            <listenerConfigurations/>
+            <failIgnored>false</failIgnored>
+
+
+            <!-- Configures the source feature: optional, usually the source feature
+                 is received as an event. The sourceFeature can be used to fill missing
+                 metadata (such as the coordinate system) if needed. -->
+            <outputFeature>
+                <!-- feature typeName (schema) to read from the source DataStore -->
+                <!-- <typeName>MUNICIPALITIES</typeName>  -->
+                <!-- Coordinate system EPSG code: force input feature crs,
+                     if not defined -->
+                <!-- <crs>EPSG:4326</crs> -->
+                <!-- source GeoTools DataStore connection parameters:
+                     an entry for each connection parameter  -->
+                <dataStore>
+                    <entry>
+                      <string>dbtype</string>
+                      <string>postgis</string>
+                    </entry>
+                    <entry>
+					<string>host</string>
+                      <string>192.168.50.132</string>
+                    </entry>
+                    <entry>
+                      <string>port</string>
+                      <string>5432</string>
+                    </entry>
+                    <entry>
+                      <string>database</string>
+                      <string>adbarno</string>
+                    </entry>
+                    <entry>
+                      <string>user</string>
+                      <string>postgres</string>
+                    </entry>
+                    <entry>
+                      <string>passwd</string>
+                      <string>postgres</string>
+                    </entry>
+                </dataStore>
+            </outputFeature>
+
+            <!-- Configures the output feature: mandatory -->
+            <sourceFeature>
+			<!-- feature typeName (schema): will be created if not
+                     already present in output DataStore -->
+                <typeName>SGID10.BOUNDARIES.MUNICIPALITIES</typeName>
+                <!-- Coordinate system EPSG code: force output feature crs,
+                     if not defined the source crs is used -->
+                <!-- <crs>EPSG:32142</crs> -->
+                <!-- output GeoTools DataStore connection parameters:
+                     an entry for each connection parameter  -->
+                <dataStore>
+                    <entry>
+                      <string>dbtype</string>
+                      <string>arcsde</string>
+                    </entry>
+                    <entry>
+                      <string>server</string>
+                      <string>gdb10.agrc.utah.gov</string>
+                    </entry>
+                    <entry>
+                      <string>port</string>
+                      <string>5151</string>
+                    </entry>
+                    <entry>
+                      <string>instance</string>
+                      <string>SGID10</string>
+                    </entry>
+                    <entry>
+					<string>user</string>
+                      <string>agrc</string>
+                    </entry>
+                    <entry>
+                      <string>password</string>
+                      <string>agrc</string>
+                    </entry>
+                </dataStore>
+            </sourceFeature>
+
+            <!-- do a projection of the input feature using the attributeMappings
+                 property: only the attributes defined in mappings are copied to
+                 the output feature -->
+            <projectOnMappings>false</projectOnMappings>
+            <!-- attribute mappings from output names to source names
+                 permits attribute renaming  -->
+            <attributeMappings>
+                <entry>
+                  <string>NEWNAME</string>
+                  <string>OLDNAME</string>
+                </entry>
+            </attributeMappings>
+            <!-- remove data in the output feature before importing the new one -->
+            <purgeData>true</purgeData>
+
+        </Ds2dsConfiguration>
+		
+	
+	<CheckerConfiguration>
+		<id>checker</id>
+		<description>checker action</description>
+		<name>checker Configuration</name>
+	</CheckerConfiguration>
+	
+	</EventConsumerConfiguration>
+
+    <ListenerConfigurations>
+        <LoggingProgressListener>
+            <serviceID>loggingListenerService</serviceID>
+            <id>Logger</id>
+            <loggerName>it.geosolutions.geobatch</loggerName>
+        </LoggingProgressListener>
+        <CumulatingProgressListener>
+            <serviceID>cumulatingListenerService</serviceID>
+            <id>Cumulator</id>
+        </CumulatingProgressListener>
+        <StatusProgressListener>
+            <serviceID>statusListenerService</serviceID>
+            <id>Status</id>
+        </StatusProgressListener>
+    </ListenerConfigurations>
+</FlowConfiguration>
