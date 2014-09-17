@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlowConfiguration>
+	
+	<id>geodatabase2pg</id>
+	<description>Flow to perform the geodatabase2pg migration</description>
+	<name>geodatabase2pg</name>
+	<autorun>true</autorun>
+	
+	<EventGeneratorConfiguration>
+		<wildCard>*.zip</wildCard>
+		<watchDirectory>geodatabase2pg/in</watchDirectory>
+		<osType>OS_UNDEFINED</osType>
+		<eventType>FILE_ADDED</eventType>
+		<id>id</id>
+        <serviceID>fsEventGeneratorService</serviceID>
+	</EventGeneratorConfiguration>
+	
+	<EventConsumerConfiguration>
+	<performBackup>true</performBackup>
+
+	<ScriptingConfiguration>
+	                <id>create_schema</id>
+			<description>Create schema for the geodatabase migration</description>
+			<name>Create Schema</name>
+                        <language>groovy</language>
+                        <scriptFile>/opt/gb_config_dir/geodatabase2pg/create_schema/create_schema.groovy</scriptFile>
+                        <properties>
+				<entry>
+					<string>host_config</string>
+					<string>192.168.50.132</string>
+				</entry>
+                                <entry>
+                                        <string>port_config</string>
+                                        <string>5432</string>
+                                </entry>
+                                <entry>
+                                        <string>user_config</string>
+                                        <string>migration</string>
+                                </entry>
+                                <entry>
+                                        <string>password_config</string>
+                                        <string>migration</string>
+                                </entry>
+                                <entry>
+                                        <string>dbname_config</string>
+                                        <string>adbarnoFromGDB</string>
+                                </entry>
+                                <entry>
+                                        <string>create_schema_error_log</string>
+                                        <string>/opt/gb_config_dir/geodatabase2pg/ogr2ogr/config/errorlog.txt</string>
+                                </entry>
+                                <entry>
+                                        <string>create_schema_executable</string>
+                                        <string>/opt/gb_config_dir/geodatabase2pg/create_schema/createschema.sh</string>
+                                </entry>
+			</properties>
+	</ScriptingConfiguration>
+        
+	<TaskExecutorConfiguration>
+			<id>ogr2ogr</id>
+			<description>Flow to run ogr2ogr command</description>
+			<name>ogr2ogr flow</name>
+			<errorFile>/opt/gb_config_dir/geodatabase2pg/ogr2ogr/config/errorlog.txt</errorFile>
+			<xsl>config/ogr2ogr.xsl</xsl>
+			<timeOut>1200000</timeOut> <!-- milliseconds -->
+			<executable>/opt/gdal/1110/bin/ogr2ogr</executable>
+			<defaultScript></defaultScript>
+			<outputName>*.txt</outputName>
+		    <!--
+			<variables>
+				 <entry>
+				    <string>GDAL_DATA</string>
+				    <string>C:/Python26/DLLs/gdalwin32-1.6/data</string>
+				  </entry>
+				  <entry>
+				    <string>PATH</string>
+				    <string>D:/work/programs/Java/jdk1.5.0_17/bin</string>
+				  </entry>
+			</variables>
+			-->
+		</TaskExecutorConfiguration>		
+		<id>id</id>
+	</EventConsumerConfiguration>
+	
+</FlowConfiguration>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<Ogr2ogr>
+        <overwrite />
+	<skipFailures />
+	<outputFormat>"PostgreSQL" PG:"host=192.168.50.132 port=5432 user=postgres dbname=adbarnoFromGDB password=postgres"</outputFormat>
+	<gdbZippedFile>/home/geosolutions/prelievi/prelievi.gdb</gdbZippedFile>
+</Ogr2ogr>
